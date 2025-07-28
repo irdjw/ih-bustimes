@@ -697,17 +697,29 @@
         const name = (dataset.name || '').toLowerCase();
         const searchText = `${description} ${name}`;
         
+        if (searchText.includes('10')) {
+          routes['10'] = this.generateRouteSchedule('10', 'Lingfield Park', 20);
+        }
+        if (searchText.includes('12')) {
+          routes['12'] = this.generateRouteSchedule('12', 'Coulby Newham', 30);
+        }
+        if (searchText.includes('13')) {
+          routes['13'] = this.generateRouteSchedule('13', 'Coulby Newham', 25);
+        }
+        if (searchText.includes('14')) {
+          routes['14'] = this.generateRouteSchedule('14', 'Trimdon Avenue', 35);
+        }
         if (searchText.includes('17a') || searchText.includes('17 a')) {
-          routes['17A'] = this.generateRouteSchedule('17A', 'Middlesbrough', 15);
+          routes['17A'] = this.generateRouteSchedule('17A', 'Stockton', 15);
         }
         if (searchText.includes('17b') || searchText.includes('17 b')) {
           routes['17B'] = this.generateRouteSchedule('17B', 'Stockton', 20);
         }
-        if (searchText.includes('62')) {
-          routes['62'] = this.generateRouteSchedule('62', 'Redcar', 30);
+        if (searchText.includes('29')) {
+          routes['29'] = this.generateRouteSchedule('29', 'Redcar', 40);
         }
         if (searchText.includes('63')) {
-          routes['63'] = this.generateRouteSchedule('63', 'Guisborough', 45);
+          routes['63'] = this.generateRouteSchedule('63', 'Redcar', 45);
         }
         
         // If no specific routes found, generate some generic ones
@@ -752,31 +764,55 @@
 
       generateFallbackTimetable() {
         return {
-          '17A': this.generateRouteSchedule('17A', 'Middlesbrough', 15),
+          '10': this.generateRouteSchedule('10', 'Lingfield Park', 20),
+          '12': this.generateRouteSchedule('12', 'Coulby Newham', 30),
+          '13': this.generateRouteSchedule('13', 'Coulby Newham', 25),
+          '14': this.generateRouteSchedule('14', 'Trimdon Avenue', 35),
+          '17A': this.generateRouteSchedule('17A', 'Stockton', 15),
           '17B': this.generateRouteSchedule('17B', 'Stockton', 20),
-          '62': this.generateRouteSchedule('62', 'Redcar', 30),
-          '63': this.generateRouteSchedule('63', 'Guisborough', 45)
+          '29': this.generateRouteSchedule('29', 'Redcar', 40),
+          '63': this.generateRouteSchedule('63', 'Redcar', 45)
         };
       }
 
       async getBusTimesForStop(stopId) {
         const buses = [];
         
-        // Combine all route schedules
+        // Generate stop-specific variations to simulate different stops
+        const stopVariations = {
+          "079073279A": { offset: 0, routes: ["10", "12", "13", "14"] },         // Stand O
+          "079073279B": { offset: 1, routes: ["17A", "17B"] },                   // Stand P  
+          "079073279C": { offset: 2, routes: ["29", "63"] }                      // Stand Q
+        };
+        
+        const stopConfig = stopVariations[stopId] || stopVariations["079073279A"];
+        
+        // Combine route schedules for this specific stop
         for (const [routeNumber, departures] of Object.entries(this.timetableData)) {
-          for (const departure of departures) {
-            const enhanced = await this.enhanceWithRealTimeData({ ...departure }, stopId);
-            if (enhanced) {
-              buses.push(enhanced);
+          // Only include routes that serve this stop
+          if (stopConfig.routes.includes(routeNumber)) {
+            for (const departure of departures) {
+              // Add stop-specific timing variation
+              const modifiedDeparture = { 
+                ...departure,
+                scheduledTime: new Date(departure.scheduledTime.getTime() + (stopConfig.offset * 60000)) // 1 min offset per stop
+              };
+              
+              const enhanced = await this.enhanceWithRealTimeData(modifiedDeparture, stopId);
+              if (enhanced) {
+                buses.push(enhanced);
+              }
             }
           }
         }
+        
+        console.log(`Generated ${buses.length} departures for stop ${stopId} (${stopConfig.routes.join(', ')})`);
         
         // Sort by estimated or scheduled time
         return buses
           .filter(bus => bus.status !== "cancelled")
           .sort((a, b) => (a.estimatedTime || a.scheduledTime) - (b.estimatedTime || b.scheduledTime))
-          .slice(0, 8); // Show next 8 departures
+          .slice(0, 6); // Show next 6 departures per stop
       }
 
       async enhanceWithRealTimeData(bus, stopId) {
@@ -865,16 +901,19 @@
         const stop = this.busStops[this.currentStopIndex];
         const buses = this.allBusData[stop.id];
         
+        console.log(`Displaying data for ${stop.name} (${stop.id}):`, buses?.length || 0, "buses");
+        
         if (!buses || !buses.length) {
-          this.departuresContainer.innerHTML = '<div class="status no-data">No upcoming departures</div>';
+          this.departuresContainer.innerHTML = '<div class="status no-data">No upcoming departures for this stop</div>';
           return;
         }
 
-        // Get the next bus globally
+        // Get the next bus globally (for highlighting purposes)
         const globalNext = Object.values(this.allBusData).flat()
           .filter(bus => bus.status !== "cancelled")
           .sort((a, b) => (a.estimatedTime || a.scheduledTime) - (b.estimatedTime || b.scheduledTime))[0];
 
+        // Display buses for THIS SPECIFIC STOP
         this.departuresContainer.innerHTML = buses
           .map(bus => {
             const displayTime = bus.estimatedTime || bus.scheduledTime;
@@ -931,7 +970,7 @@
         const displayTime = globalNext.estimatedTime || globalNext.scheduledTime;
         const mins = parseInt(this.calculateTimeRemaining(displayTime).replace(" mins", "").replace(" min", "").replace("Due now", "0"));
 
-        // Phil notification system for 17A/17B routes
+        // Phil notification system for 17A/17B routes ONLY
         if (["17A", "17B"].includes(globalNext.routeNumber)) {
           const leaveTime = Math.max(0, mins - 2);
           this.nextBusTimeElement.textContent = leaveTime <= 0 ? "Leave now!" : `${leaveTime} min${leaveTime === 1 ? "" : "s"}`;
@@ -940,6 +979,7 @@
               ? `Phil you need to leave now for the ${globalNext.routeNumber}`
               : `Phil you need to leave in ${leaveTime} min${leaveTime === 1 ? "" : "s"} for the ${globalNext.routeNumber}`;
         } else {
+          // For all other routes, just show normal bus information
           this.nextBusTimeElement.textContent = `${mins} min${mins === 1 ? "" : "s"}`;
           this.nextBusRouteElement.textContent = `Route ${globalNext.routeNumber} to ${globalNext.destination}`;
         }
@@ -954,6 +994,7 @@
 
       nextStop() {
         this.currentStopIndex = (this.currentStopIndex + 1) % this.busStops.length;
+        console.log(`Cycling to stop ${this.currentStopIndex + 1}: ${this.busStops[this.currentStopIndex].name}`);
         this.displayCurrentStop();
         this.displayBusTimesForCurrentStop();
         this.resetCountdown();
