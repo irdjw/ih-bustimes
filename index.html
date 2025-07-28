@@ -19,14 +19,24 @@
             height: 100vh;
             overflow: hidden;
             padding: 30px;
+            /* TV-specific optimizations */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            cursor: none; /* Hide cursor on TV */
         }
 
+        /* TV overscan safe area */
         .container {
             height: 100%;
             display: flex;
             flex-direction: column;
             max-width: 1200px;
             margin: 0 auto;
+            /* TV safe area - avoid edges where content might be cut off */
+            padding: 2vh 2vw;
+            box-sizing: border-box;
         }
 
         .next-bus-banner {
@@ -38,6 +48,11 @@
             margin-bottom: 30px;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(74, 222, 128, 0.1);
+            /* Enhanced visibility for TV */
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .next-bus-title {
@@ -45,6 +60,8 @@
             color: #4ade80;
             margin-bottom: 10px;
             font-weight: 300;
+            /* Better TV readability */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .next-bus-time {
@@ -53,11 +70,15 @@
             color: #4ade80;
             text-shadow: 0 2px 10px rgba(74, 222, 128, 0.3);
             margin-bottom: 5px;
+            /* Enhanced for TV viewing distance */
+            letter-spacing: 2px;
         }
 
         .next-bus-route {
             font-size: 1.5rem;
             opacity: 0.9;
+            /* Better contrast for TV */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
         }
 
         .header {
@@ -66,14 +87,18 @@
             border-bottom: 3px solid rgba(255, 255, 255, 0.3);
             padding-bottom: 25px;
             position: relative;
+            /* Ensure header is always visible */
+            min-height: 120px;
         }
 
         .stop-name {
             font-size: 3rem;
             font-weight: bold;
             margin-bottom: 8px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             transition: all 0.5s ease;
+            /* TV-optimized spacing */
+            line-height: 1.1;
         }
 
         .stop-info {
@@ -81,6 +106,7 @@
             opacity: 0.9;
             margin-bottom: 8px;
             transition: all 0.5s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .stop-code {
@@ -88,6 +114,7 @@
             opacity: 0.7;
             font-family: monospace;
             transition: all 0.5s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .cycling-indicator {
@@ -99,6 +126,8 @@
             align-items: center;
             font-size: 0.9rem;
             opacity: 0.8;
+            /* Ensure visibility on TV */
+            min-width: 140px;
         }
 
         .stop-counter {
@@ -106,13 +135,14 @@
             padding: 8px 15px;
             border-radius: 20px;
             margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .cycle-progress {
             width: 120px;
-            height: 6px;
+            height: 8px; /* Slightly thicker for TV visibility */
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
         }
 
@@ -121,7 +151,7 @@
             background: #4ade80;
             width: 0%;
             transition: width 0.3s ease;
-            border-radius: 3px;
+            border-radius: 4px;
         }
 
         .departures {
@@ -129,6 +159,13 @@
             overflow-y: auto;
             opacity: 1;
             transition: opacity 0.3s ease;
+            /* TV-specific scrolling */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+
+        .departures::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
         }
 
         .departures.fading {
@@ -141,13 +178,15 @@
             justify-content: space-between;
             background: rgba(255, 255, 255, 0.1);
             margin-bottom: 15px;
-            padding: 20px 25px;
+            padding: 25px 30px; /* Increased padding for TV */
             border-radius: 15px;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
             transform: translateX(0);
+            /* TV-optimized minimum height */
+            min-height: 80px;
         }
 
         .departure-item:hover {
@@ -185,14 +224,16 @@
         .route-number {
             background: #ff6b35;
             color: white;
-            padding: 12px 20px;
+            padding: 15px 25px; /* Larger for TV visibility */
             border-radius: 50px;
-            font-size: 1.8rem;
+            font-size: 2rem; /* Increased for TV */
             font-weight: bold;
-            margin-right: 20px;
-            min-width: 70px;
+            margin-right: 25px;
+            min-width: 80px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            /* Better text rendering for TV */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .route-number.next-bus {
@@ -201,8 +242,10 @@
         }
 
         .destination {
-            font-size: 1.6rem;
+            font-size: 1.7rem; /* Increased for TV */
             font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
         }
 
         .time-info {
@@ -210,13 +253,15 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
+            min-width: 120px; /* Ensure consistent width */
         }
 
         .departure-time {
-            font-size: 2.2rem;
+            font-size: 2.4rem; /* Increased for TV */
             font-weight: bold;
             color: #94a3b8;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            line-height: 1;
         }
 
         .departure-time.next-bus {
@@ -224,21 +269,23 @@
         }
 
         .time-remaining {
-            font-size: 1.2rem;
+            font-size: 1.3rem; /* Increased for TV */
             opacity: 0.8;
             margin-top: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .time-remaining.next-bus {
             color: #4ade80;
             font-weight: bold;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
         }
 
         .status {
             text-align: center;
             padding: 30px;
-            font-size: 1.5rem;
+            font-size: 1.8rem; /* Increased for TV */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .loading {
@@ -262,17 +309,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            /* TV safe area */
+            min-height: 50px;
         }
 
         .last-updated {
-            font-size: 1rem;
+            font-size: 1.1rem; /* Slightly larger for TV */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .next-stop-timer {
-            font-size: 0.9rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .refresh-indicator {
@@ -305,19 +356,38 @@
         }
 
         .cache-indicator {
-            font-size: 0.8rem;
+            font-size: 0.9rem; /* Slightly larger for TV */
             opacity: 0.6;
             margin-left: 10px;
         }
 
         .data-source {
-            font-size: 0.8rem;
+            font-size: 0.9rem; /* Slightly larger for TV */
             opacity: 0.5;
             margin-top: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
-        /* Responsive design for different TV sizes */
+        /* TV-specific responsive design */
+        @media (max-width: 1920px) and (min-width: 1280px) {
+            /* Standard HD TV optimization */
+            .container { padding: 3vh 3vw; }
+            .next-bus-time { font-size: 4.5rem; }
+            .stop-name { font-size: 3.2rem; }
+        }
+
+        @media (max-width: 1280px) and (min-width: 1024px) {
+            /* Smaller TV/monitor optimization */
+            .stop-name { font-size: 2.8rem; }
+            .next-bus-time { font-size: 3.5rem; }
+            .route-number { font-size: 1.8rem; padding: 12px 22px; }
+            .departure-time { font-size: 2.1rem; }
+            .destination { font-size: 1.5rem; }
+        }
+
         @media (max-width: 1024px) {
+            /* Tablet/small screen fallback */
+            .container { padding: 2vh 2vw; }
             .stop-name { font-size: 2.5rem; }
             .next-bus-time { font-size: 3.2rem; }
             .route-number { font-size: 1.5rem; padding: 10px 18px; }
@@ -326,11 +396,33 @@
         }
 
         @media (max-width: 768px) {
+            /* Mobile fallback */
+            .container { padding: 1vh 1vw; }
             .stop-name { font-size: 2rem; }
             .next-bus-time { font-size: 2.5rem; }
             .route-number { font-size: 1.3rem; padding: 8px 15px; }
             .departure-time { font-size: 1.6rem; }
             .destination { font-size: 1.2rem; }
+        }
+
+        /* TV-specific power saving */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* High contrast mode for older TVs */
+        @media (prefers-contrast: high) {
+            .departure-item {
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                background: rgba(0, 0, 0, 0.3);
+            }
+            .next-bus-banner {
+                border: 3px solid #4ade80;
+            }
         }
   </style>
 </head>
@@ -905,9 +997,106 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => new BODSBusDisplay());
+    // TV-specific enhancements
+    class TVOptimizations {
+      constructor() {
+        this.setupTVFeatures();
+        this.preventScreenSaver();
+        this.handleRemoteControl();
+      }
+
+      setupTVFeatures() {
+        // Prevent context menu on TV remotes
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        
+        // Prevent text selection
+        document.addEventListener('selectstart', (e) => e.preventDefault());
+        
+        // Handle TV power management
+        if ('wakeLock' in navigator) {
+          this.requestWakeLock();
+        }
+      }
+
+      async requestWakeLock() {
+        try {
+          const wakeLock = await navigator.wakeLock.request('screen');
+          console.log('Screen wake lock activated for TV display');
+          
+          // Reacquire wake lock when page becomes visible
+          document.addEventListener('visibilitychange', async () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+              await this.requestWakeLock();
+            }
+          });
+        } catch (err) {
+          console.log('Wake lock not supported:', err.message);
+        }
+      }
+
+      preventScreenSaver() {
+        // Move an invisible element to prevent screensaver
+        let x = 0;
+        setInterval(() => {
+          const invisible = document.createElement('div');
+          invisible.style.position = 'absolute';
+          invisible.style.left = `${x}px`;
+          invisible.style.top = '0px';
+          invisible.style.width = '1px';
+          invisible.style.height = '1px';
+          invisible.style.opacity = '0';
+          document.body.appendChild(invisible);
+          setTimeout(() => document.body.removeChild(invisible), 100);
+          x = (x + 1) % 2; // Minimal movement
+        }, 30000); // Every 30 seconds
+      }
+
+      handleRemoteControl() {
+        // Handle TV remote control keys
+        document.addEventListener('keydown', (e) => {
+          switch(e.key) {
+            case 'Enter':
+            case 'OK':
+              // Force refresh on OK/Enter
+              location.reload();
+              break;
+            case 'Escape':
+            case 'Back':
+              // Handle back button - could exit fullscreen
+              if (document.fullscreenElement) {
+                document.exitFullscreen();
+              }
+              break;
+            case 'F11':
+              // Toggle fullscreen
+              if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+              } else {
+                document.exitFullscreen();
+              }
+              break;
+          }
+        });
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      new BODSBusDisplay();
+      new TVOptimizations();
+      
+      // Auto-enter fullscreen after 5 seconds (optional)
+      setTimeout(() => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(console.log);
+        }
+      }, 5000);
+    });
+
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) location.reload();
+      if (!document.hidden) {
+        // Reload page when TV/browser becomes visible again
+        setTimeout(() => location.reload(), 1000);
+      }
     });
   </script>
 </body>
