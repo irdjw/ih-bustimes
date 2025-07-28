@@ -697,14 +697,26 @@
         const name = (dataset.name || '').toLowerCase();
         const searchText = `${description} ${name}`;
         
+        if (searchText.includes('10')) {
+          routes['10'] = this.generateRouteSchedule('10', 'Middlesbrough', 20);
+        }
+        if (searchText.includes('12')) {
+          routes['12'] = this.generateRouteSchedule('12', 'Redcar', 30);
+        }
+        if (searchText.includes('13')) {
+          routes['13'] = this.generateRouteSchedule('13', 'Saltburn', 25);
+        }
+        if (searchText.includes('14')) {
+          routes['14'] = this.generateRouteSchedule('14', 'Guisborough', 35);
+        }
         if (searchText.includes('17a') || searchText.includes('17 a')) {
           routes['17A'] = this.generateRouteSchedule('17A', 'Middlesbrough', 15);
         }
         if (searchText.includes('17b') || searchText.includes('17 b')) {
           routes['17B'] = this.generateRouteSchedule('17B', 'Stockton', 20);
         }
-        if (searchText.includes('62')) {
-          routes['62'] = this.generateRouteSchedule('62', 'Redcar', 30);
+        if (searchText.includes('29')) {
+          routes['29'] = this.generateRouteSchedule('29', 'Hartlepool', 40);
         }
         if (searchText.includes('63')) {
           routes['63'] = this.generateRouteSchedule('63', 'Guisborough', 45);
@@ -752,9 +764,13 @@
 
       generateFallbackTimetable() {
         return {
+          '10': this.generateRouteSchedule('10', 'Middlesbrough', 20),
+          '12': this.generateRouteSchedule('12', 'Redcar', 30),
+          '13': this.generateRouteSchedule('13', 'Saltburn', 25),
+          '14': this.generateRouteSchedule('14', 'Guisborough', 35),
           '17A': this.generateRouteSchedule('17A', 'Middlesbrough', 15),
           '17B': this.generateRouteSchedule('17B', 'Stockton', 20),
-          '62': this.generateRouteSchedule('62', 'Redcar', 30),
+          '29': this.generateRouteSchedule('29', 'Hartlepool', 40),
           '63': this.generateRouteSchedule('63', 'Guisborough', 45)
         };
       }
@@ -764,9 +780,9 @@
         
         // Generate stop-specific variations to simulate different stops
         const stopVariations = {
-          "079073279A": { offset: 0, routes: ["17A", "17B", "62", "63"] },      // Stand O
-          "079073279B": { offset: 1, routes: ["17A", "17B", "62"] },             // Stand P  
-          "079073279C": { offset: 2, routes: ["17B", "63"] }                     // Stand Q
+          "079073279A": { offset: 0, routes: ["10", "12", "13", "14"] },         // Stand O
+          "079073279B": { offset: 1, routes: ["17A", "17B"] },                   // Stand P  
+          "079073279C": { offset: 2, routes: ["29", "63"] }                      // Stand Q
         };
         
         const stopConfig = stopVariations[stopId] || stopVariations["079073279A"];
