@@ -698,28 +698,28 @@
         const searchText = `${description} ${name}`;
         
         if (searchText.includes('10')) {
-          routes['10'] = this.generateRouteSchedule('10', 'Middlesbrough', 20);
+          routes['10'] = this.generateRouteSchedule('10', 'Lingfield Park', 20);
         }
         if (searchText.includes('12')) {
-          routes['12'] = this.generateRouteSchedule('12', 'Redcar', 30);
+          routes['12'] = this.generateRouteSchedule('12', 'Coulby Newham', 30);
         }
         if (searchText.includes('13')) {
-          routes['13'] = this.generateRouteSchedule('13', 'Saltburn', 25);
+          routes['13'] = this.generateRouteSchedule('13', 'Coulby Newham', 25);
         }
         if (searchText.includes('14')) {
-          routes['14'] = this.generateRouteSchedule('14', 'Guisborough', 35);
+          routes['14'] = this.generateRouteSchedule('14', 'Trimdon Avenue', 35);
         }
         if (searchText.includes('17a') || searchText.includes('17 a')) {
-          routes['17A'] = this.generateRouteSchedule('17A', 'Middlesbrough', 15);
+          routes['17A'] = this.generateRouteSchedule('17A', 'Stockton', 15);
         }
         if (searchText.includes('17b') || searchText.includes('17 b')) {
           routes['17B'] = this.generateRouteSchedule('17B', 'Stockton', 20);
         }
         if (searchText.includes('29')) {
-          routes['29'] = this.generateRouteSchedule('29', 'Hartlepool', 40);
+          routes['29'] = this.generateRouteSchedule('29', 'Redcar', 40);
         }
         if (searchText.includes('63')) {
-          routes['63'] = this.generateRouteSchedule('63', 'Guisborough', 45);
+          routes['63'] = this.generateRouteSchedule('63', 'Redcar', 45);
         }
         
         // If no specific routes found, generate some generic ones
@@ -764,14 +764,14 @@
 
       generateFallbackTimetable() {
         return {
-          '10': this.generateRouteSchedule('10', 'Middlesbrough', 20),
-          '12': this.generateRouteSchedule('12', 'Redcar', 30),
-          '13': this.generateRouteSchedule('13', 'Saltburn', 25),
-          '14': this.generateRouteSchedule('14', 'Guisborough', 35),
-          '17A': this.generateRouteSchedule('17A', 'Middlesbrough', 15),
+          '10': this.generateRouteSchedule('10', 'Lingfield Park', 20),
+          '12': this.generateRouteSchedule('12', 'Coulby Newham', 30),
+          '13': this.generateRouteSchedule('13', 'Coulby Newham', 25),
+          '14': this.generateRouteSchedule('14', 'Trimdon Avenue', 35),
+          '17A': this.generateRouteSchedule('17A', 'Stockton', 15),
           '17B': this.generateRouteSchedule('17B', 'Stockton', 20),
-          '29': this.generateRouteSchedule('29', 'Hartlepool', 40),
-          '63': this.generateRouteSchedule('63', 'Guisborough', 45)
+          '29': this.generateRouteSchedule('29', 'Redcar', 40),
+          '63': this.generateRouteSchedule('63', 'Redcar', 45)
         };
       }
 
