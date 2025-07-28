@@ -762,21 +762,41 @@
       async getBusTimesForStop(stopId) {
         const buses = [];
         
-        // Combine all route schedules
+        // Generate stop-specific variations to simulate different stops
+        const stopVariations = {
+          "079073279A": { offset: 0, routes: ["17A", "17B", "62", "63"] },      // Stand O
+          "079073279B": { offset: 1, routes: ["17A", "17B", "62"] },             // Stand P  
+          "079073279C": { offset: 2, routes: ["17B", "63"] }                     // Stand Q
+        };
+        
+        const stopConfig = stopVariations[stopId] || stopVariations["079073279A"];
+        
+        // Combine route schedules for this specific stop
         for (const [routeNumber, departures] of Object.entries(this.timetableData)) {
-          for (const departure of departures) {
-            const enhanced = await this.enhanceWithRealTimeData({ ...departure }, stopId);
-            if (enhanced) {
-              buses.push(enhanced);
+          // Only include routes that serve this stop
+          if (stopConfig.routes.includes(routeNumber)) {
+            for (const departure of departures) {
+              // Add stop-specific timing variation
+              const modifiedDeparture = { 
+                ...departure,
+                scheduledTime: new Date(departure.scheduledTime.getTime() + (stopConfig.offset * 60000)) // 1 min offset per stop
+              };
+              
+              const enhanced = await this.enhanceWithRealTimeData(modifiedDeparture, stopId);
+              if (enhanced) {
+                buses.push(enhanced);
+              }
             }
           }
         }
+        
+        console.log(`Generated ${buses.length} departures for stop ${stopId} (${stopConfig.routes.join(', ')})`);
         
         // Sort by estimated or scheduled time
         return buses
           .filter(bus => bus.status !== "cancelled")
           .sort((a, b) => (a.estimatedTime || a.scheduledTime) - (b.estimatedTime || b.scheduledTime))
-          .slice(0, 8); // Show next 8 departures
+          .slice(0, 6); // Show next 6 departures per stop
       }
 
       async enhanceWithRealTimeData(bus, stopId) {
@@ -865,16 +885,19 @@
         const stop = this.busStops[this.currentStopIndex];
         const buses = this.allBusData[stop.id];
         
+        console.log(`Displaying data for ${stop.name} (${stop.id}):`, buses?.length || 0, "buses");
+        
         if (!buses || !buses.length) {
-          this.departuresContainer.innerHTML = '<div class="status no-data">No upcoming departures</div>';
+          this.departuresContainer.innerHTML = '<div class="status no-data">No upcoming departures for this stop</div>';
           return;
         }
 
-        // Get the next bus globally
+        // Get the next bus globally (for highlighting purposes)
         const globalNext = Object.values(this.allBusData).flat()
           .filter(bus => bus.status !== "cancelled")
           .sort((a, b) => (a.estimatedTime || a.scheduledTime) - (b.estimatedTime || b.scheduledTime))[0];
 
+        // Display buses for THIS SPECIFIC STOP
         this.departuresContainer.innerHTML = buses
           .map(bus => {
             const displayTime = bus.estimatedTime || bus.scheduledTime;
@@ -931,7 +954,7 @@
         const displayTime = globalNext.estimatedTime || globalNext.scheduledTime;
         const mins = parseInt(this.calculateTimeRemaining(displayTime).replace(" mins", "").replace(" min", "").replace("Due now", "0"));
 
-        // Phil notification system for 17A/17B routes
+        // Phil notification system for 17A/17B routes ONLY
         if (["17A", "17B"].includes(globalNext.routeNumber)) {
           const leaveTime = Math.max(0, mins - 2);
           this.nextBusTimeElement.textContent = leaveTime <= 0 ? "Leave now!" : `${leaveTime} min${leaveTime === 1 ? "" : "s"}`;
@@ -940,6 +963,7 @@
               ? `Phil you need to leave now for the ${globalNext.routeNumber}`
               : `Phil you need to leave in ${leaveTime} min${leaveTime === 1 ? "" : "s"} for the ${globalNext.routeNumber}`;
         } else {
+          // For all other routes, just show normal bus information
           this.nextBusTimeElement.textContent = `${mins} min${mins === 1 ? "" : "s"}`;
           this.nextBusRouteElement.textContent = `Route ${globalNext.routeNumber} to ${globalNext.destination}`;
         }
@@ -954,6 +978,7 @@
 
       nextStop() {
         this.currentStopIndex = (this.currentStopIndex + 1) % this.busStops.length;
+        console.log(`Cycling to stop ${this.currentStopIndex + 1}: ${this.busStops[this.currentStopIndex].name}`);
         this.displayCurrentStop();
         this.displayBusTimesForCurrentStop();
         this.resetCountdown();
